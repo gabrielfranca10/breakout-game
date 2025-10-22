@@ -1,13 +1,10 @@
-// Arquivo: include/screens.h
-
 #ifndef SCREENS_H
 #define SCREENS_H
 
-// Enum para gerenciar os estados (telas) do jogo
 typedef enum GameScreen {
-    SCREEN_MENU,      // Tela do Menu Principal
-    SCREEN_GAME,      // Tela do Jogo
-    SCREEN_GAME_OVER  // Tela de Fim de Jogo
+    SCREEN_MENU,      
+    SCREEN_GAME,      
+    SCREEN_GAME_OVER  
 } GameScreen;
 
-#endif // SCREENS_H
+#endif
