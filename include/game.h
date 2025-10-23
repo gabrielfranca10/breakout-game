@@ -2,10 +2,12 @@
 #define GAME_H
 
 #include "raylib.h"
-#include "paddle.h" 
+#include "paddle.h"
+#include "ball.h"
 
 typedef struct Game {
     Paddle paddle;
+    Ball ball;
     int screenWidth;
     int screenHeight;
 } Game;

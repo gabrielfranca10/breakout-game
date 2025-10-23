@@ -95,7 +95,7 @@ int main(void)
                             currentScreen = SCREEN_GAME_OVER;
                         } else if (i == 2) {
                             CloseWindow();
-                            break; 
+                            return 0; 
                         }
                     }
                 }
