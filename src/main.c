@@ -1,6 +1,6 @@
 #include "raylib.h"
-#include "screens.h"
-#include "menu.h"
+#include "screens.h" 
+#include "game.h"  
 #include <stdio.h>
 
 const int screenWidth = 800;
@@ -43,12 +43,20 @@ int main(void)
 {
     InitWindow(screenWidth, screenHeight, "Projeto Breakout");
     SetTargetFPS(60);
+    
+    Game game = {0};
+    InitGame(&game, screenWidth, screenHeight); 
 
     GameScreen currentScreen = SCREEN_MENU;
     int playerScore = 0; 
 
     while (!WindowShouldClose())
     {
+        if (currentScreen == SCREEN_GAME)
+        {
+            UpdateGame(&game); 
+        }
+
         BeginDrawing();
 
         switch (currentScreen)
@@ -79,25 +87,26 @@ int main(void)
 
                     if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                         if (i == 0) {
+                            UnloadGame(&game);
+                            InitGame(&game, screenWidth, screenHeight);
                             playerScore = 0;
                             currentScreen = SCREEN_GAME;
                         } else if (i == 1) {
                             currentScreen = SCREEN_GAME_OVER;
                         } else if (i == 2) {
                             CloseWindow();
-                            return 0;
+                            break; 
                         }
                     }
                 }
+                
+                if (WindowShouldClose()) break; 
+
             } break;
 
             case SCREEN_GAME:
             {
-                ClearBackground(DARKBLUE);
-
-                DrawText("TELA DE JOGO", screenWidth / 2 - 100, 180, 40, WHITE);
-                DrawText("EM CONSTRUÇÃO", screenWidth / 2 - 150, 230, 30, YELLOW);
-                DrawText("Pressione ESC para voltar ao menu", screenWidth / 2 - 200, 380, 20, LIGHTGRAY);
+                DrawGame(game);
 
                 if (IsKeyPressed(KEY_ESCAPE)) {
                     SaveScore(playerScore);
@@ -117,6 +126,7 @@ int main(void)
         EndDrawing();
     }
 
+    UnloadGame(&game);
     CloseWindow();
     return 0;
 }
