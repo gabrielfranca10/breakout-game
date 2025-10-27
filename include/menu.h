@@ -8,7 +8,7 @@ typedef enum {
     MENU_START,
     MENU_HISTORY,
     MENU_EXIT
-} MenuOption;
+}MenuOption;
 
 MenuOption DrawMenu(int screenWidth, int screenHeight);
 

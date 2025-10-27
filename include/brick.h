@@ -8,7 +8,7 @@ struct Ball;
 typedef struct Brick {
     Rectangle rect;
     Color color;
-    struct Brick *next;
+    struct Brick *prox;
 } Brick;
 
 typedef struct BrickList {

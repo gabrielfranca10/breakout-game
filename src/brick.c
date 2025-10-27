@@ -21,7 +21,7 @@ void AddBrick(BrickList *list, Vector2 position, Vector2 size, Color color)
     newBrick->rect.height = size.y;
     newBrick->color = color;
     
-    newBrick->next = list->head;
+    newBrick->prox = list->head;
     list->head = newBrick;
     list->count++;
 }
@@ -40,15 +40,15 @@ void UpdateBrickList(BrickList *list, Ball *ball, int *score)
             
             if (prev == NULL)
             {
-                list->head = current->next;
+                list->head = current->prox;
             } 
             else 
             {
-                prev->next = current->next;
+                prev->prox = current->prox;
             }
             
             Brick *toFree = current;
-            current = current->next;
+            current = current->prox;
             free(toFree); 
             list->count--;
             
@@ -56,7 +56,7 @@ void UpdateBrickList(BrickList *list, Ball *ball, int *score)
         }
         
         prev = current;
-        current = current->next;
+        current = current->prox;
     }
 }
 
@@ -66,7 +66,7 @@ void DrawBrickList(BrickList *list)
     while (current != NULL)
     {
         DrawRectangleRec(current->rect, current->color);
-        current = current->next;
+        current = current->prox;
     }
 }
 
@@ -76,7 +76,7 @@ void FreeBrickList(BrickList *list)
     while (current != NULL)
     {
         Brick *toFree = current;
-        current = current->next;
+        current = current->prox;
         free(toFree);
     }
     list->head = NULL;

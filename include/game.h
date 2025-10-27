@@ -10,13 +10,11 @@ typedef struct Game {
     Paddle paddle;
     Ball ball;
     BrickList brickList;
-    
     int score;
-    int lives;
-    
+    int lives; 
     int screenWidth;
     int screenHeight;
-} Game;
+}Game;
 
 void InitGame(Game *game, int screenWidth, int screenHeight);
 void UpdateGame(Game *game);
