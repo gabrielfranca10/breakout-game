@@ -47,14 +47,33 @@ int main(void)
     Game game = {0};
     InitGame(&game, screenWidth, screenHeight); 
 
-    GameScreen currentScreen = SCREEN_MENU;
-    int playerScore = 0; 
+    int currentScreen = SCREEN_MENU; 
 
     while (!WindowShouldClose())
     {
-        if (currentScreen == SCREEN_GAME)
+        switch (currentScreen)
         {
-            UpdateGame(&game); 
+            case SCREEN_MENU:
+            {
+            } break;
+            case SCREEN_GAME:
+            {
+                if (game.lives > 0) {
+                    UpdateGame(&game);
+                } else {
+                    if (IsKeyPressed(KEY_ENTER)) {
+                        SaveScore(game.score);
+                        currentScreen = SCREEN_MENU;
+                    } else if (IsKeyPressed(KEY_ESCAPE)) {
+                         SaveScore(game.score);
+                         currentScreen = SCREEN_MENU;
+                    }
+                }
+            } break;
+            case 2: 
+            {
+                if (IsKeyPressed(KEY_ESCAPE)) currentScreen = SCREEN_MENU;
+            } break;
         }
 
         BeginDrawing();
@@ -64,65 +83,45 @@ int main(void)
             case SCREEN_MENU:
             {
                 ClearBackground(BLACK);
-
                 const char *title = "BREAKOUT";
                 int titleFontSize = 60;
                 int titleWidth = MeasureText(title, titleFontSize);
                 DrawText(title, (screenWidth - titleWidth) / 2, 100, titleFontSize, YELLOW);
 
                 const char *options[] = {"Começar", "Histórico de Pontuação", "Sair"};
-                int totalOptions = 3;
-
-                for (int i = 0; i < totalOptions; i++) {
-                    float y = 220 + i * 80;
-                    Rectangle btn = {screenWidth / 2 - 160, y, 320, 50};
+                for (int i = 0; i < 3; i++) {
+                    Rectangle btn = {screenWidth / 2 - 160, 220 + i * 80.0f, 320, 50};
                     bool hover = CheckCollisionPointRec(GetMousePosition(), btn);
-
-                    if (hover)
-                        DrawRectangleRec(btn, DARKGRAY);
-                    else
-                        DrawRectangleLinesEx(btn, 3, GRAY);
-
+                    if (hover) DrawRectangleRec(btn, DARKGRAY);
+                    else DrawRectangleLinesEx(btn, 3, GRAY);
                     DrawText(options[i], btn.x + 30, btn.y + 15, 20, WHITE);
 
                     if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
                         if (i == 0) {
                             UnloadGame(&game);
                             InitGame(&game, screenWidth, screenHeight);
-                            playerScore = 0;
                             currentScreen = SCREEN_GAME;
                         } else if (i == 1) {
-                            currentScreen = SCREEN_GAME_OVER;
+                            currentScreen = 2; 
                         } else if (i == 2) {
+                            UnloadGame(&game);
                             CloseWindow();
-                            return 0; 
+                            return 0;
                         }
                     }
                 }
-                
-                if (WindowShouldClose()) break; 
-
             } break;
 
             case SCREEN_GAME:
             {
                 DrawGame(game);
-
-                if (IsKeyPressed(KEY_ESCAPE)) {
-                    SaveScore(playerScore);
-                    currentScreen = SCREEN_MENU;
-                }
             } break;
 
-            case SCREEN_GAME_OVER:
+            case 2: 
             {
                 DrawScoreHistory(screenWidth, screenHeight);
-
-                if (IsKeyPressed(KEY_ESCAPE))
-                    currentScreen = SCREEN_MENU;
             } break;
         }
-
         EndDrawing();
     }
 

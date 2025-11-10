@@ -106,7 +106,7 @@ void DrawGame(Game game)
         int textWidth = MeasureText(text, fontSize);
         DrawText(text, (game.screenWidth - textWidth) / 2, game.screenHeight / 2 - fontSize, fontSize, RED);
         
-        const char* subtext = "Pressione ENTER para reiniciar";
+        const char* subtext = "Pressione ENTER para voltar ao Menu";
         int subFontSize = 20;
         int subTextWidth = MeasureText(subtext, subFontSize);
         DrawText(subtext, (game.screenWidth - subTextWidth) / 2, game.screenHeight / 2 + 10, subFontSize, GRAY);
