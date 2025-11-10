@@ -15,7 +15,10 @@ void InitGame(Game *game, int screenWidth, int screenHeight)
     InitPaddle(&game->paddle, paddlePos, paddleSize, WHITE);
 
     Vector2 ballPos = { screenWidth / 2.0f, screenHeight / 2.0f };
-    Vector2 ballSpeed = { 250.0f, -250.0f };
+    Vector2 ballSpeed;
+    ballSpeed.y = -250.0f;
+    ballSpeed.x = GetRandomValue(-200, 200);
+
     InitBall(&game->ball, ballPos, ballSpeed, 8, YELLOW);
 
     InitBrickList(&game->brickList);
@@ -34,14 +37,12 @@ void InitGame(Game *game, int screenWidth, int screenHeight)
             Vector2 brickPos;
             brickPos.x = initialOffsetX + j * (brickWidth + 5);
             brickPos.y = initialOffsetY + i * (brickHeight + 5);
-            
             Color color;
             if (i == 0) color = RED;
             else if (i == 1) color = ORANGE;
             else if (i == 2) color = YELLOW;
             else if (i == 3) color = GREEN;
             else if (i == 4) color = BLUE;
-
             AddBrick(&game->brickList, brickPos, (Vector2){brickWidth, brickHeight}, color);
         }
     }
@@ -49,24 +50,24 @@ void InitGame(Game *game, int screenWidth, int screenHeight)
 
 void UpdateGame(Game *game)
 {
+    if (game->lives <= 0) return;
+
     UpdatePaddle(&game->paddle, game->screenWidth);
     UpdateBall(&game->ball, game->screenWidth, game->screenHeight);
-    
     UpdateBrickList(&game->brickList, &game->ball, &game->score);
 
     Rectangle paddleRect = game->paddle.rect;
 
     if (CheckCollisionCircleRec(game->ball.position, game->ball.radius, paddleRect))
     {
-        float hitPos = (game->ball.position.x - paddleRect.x) - paddleRect.width / 2;
-        float normalized = hitPos / (paddleRect.width / 2);
-
-        game->ball.speed.x = normalized * 300.0f;
-
         if (game->ball.speed.y > 0)
+        {
             game->ball.speed.y *= -1;
-
-        game->ball.position.y = paddleRect.y - game->ball.radius;
+            float hitPos = (game->ball.position.x - paddleRect.x) - paddleRect.width / 2;
+            float normalized = hitPos / (paddleRect.width / 2);
+            game->ball.speed.x = normalized * 300.0f;
+            game->ball.position.y = paddleRect.y - game->ball.radius;
+        }
     }
 
     if (game->ball.position.y - game->ball.radius > game->screenHeight)
@@ -76,13 +77,17 @@ void UpdateGame(Game *game)
         if (game->lives > 0)
         {
             Vector2 resetPos = { game->screenWidth / 2.0f, game->screenHeight / 2.0f };
-            Vector2 resetSpeed = { 250.0f, -250.0f };
+            Vector2 resetSpeed;
+            resetSpeed.y = -250.0f;
+            resetSpeed.x = GetRandomValue(-200, 200);
             InitBall(&game->ball, resetPos, resetSpeed, game->ball.radius, game->ball.color);
-            game->ball.active = true;
+        }
+        else
+        {
+            game->lives = 0;
         }
     }
 }
-
 
 void DrawGame(Game game)
 {
@@ -93,6 +98,19 @@ void DrawGame(Game game)
 
     DrawText(TextFormat("Pontos: %04i", game.score), 20, game.screenHeight - 25, 20, WHITE);
     DrawText(TextFormat("Vidas: %i", game.lives), game.screenWidth - 100, game.screenHeight - 25, 20, WHITE);
+
+    if (game.lives <= 0)
+    {
+        const char* text = "GAME OVER";
+        int fontSize = 40;
+        int textWidth = MeasureText(text, fontSize);
+        DrawText(text, (game.screenWidth - textWidth) / 2, game.screenHeight / 2 - fontSize, fontSize, RED);
+        
+        const char* subtext = "Pressione ENTER para reiniciar";
+        int subFontSize = 20;
+        int subTextWidth = MeasureText(subtext, subFontSize);
+        DrawText(subtext, (game.screenWidth - subTextWidth) / 2, game.screenHeight / 2 + 10, subFontSize, GRAY);
+    }
 }
 
 void UnloadGame(Game *game)
