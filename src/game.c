@@ -55,19 +55,34 @@ void UpdateGame(Game *game)
     UpdateBrickList(&game->brickList, &game->ball, &game->score);
 
     Rectangle paddleRect = game->paddle.rect;
+
     if (CheckCollisionCircleRec(game->ball.position, game->ball.radius, paddleRect))
     {
-        game->ball.speed.y *= -1;
+        float hitPos = (game->ball.position.x - paddleRect.x) - paddleRect.width / 2;
+        float normalized = hitPos / (paddleRect.width / 2);
+
+        game->ball.speed.x = normalized * 300.0f;
+
+        if (game->ball.speed.y > 0)
+            game->ball.speed.y *= -1;
+
         game->ball.position.y = paddleRect.y - game->ball.radius;
     }
 
-    if (game->ball.position.y > game->screenHeight)
+    if (game->ball.position.y - game->ball.radius > game->screenHeight)
     {
         game->lives--;
-        Vector2 resetPos = { game->screenWidth / 2.0f, game->screenHeight / 2.0f };
-        InitBall(&game->ball, resetPos, (Vector2){ 250.0f, -250.0f }, 8, YELLOW);
+
+        if (game->lives > 0)
+        {
+            Vector2 resetPos = { game->screenWidth / 2.0f, game->screenHeight / 2.0f };
+            Vector2 resetSpeed = { 250.0f, -250.0f };
+            InitBall(&game->ball, resetPos, resetSpeed, game->ball.radius, game->ball.color);
+            game->ball.active = true;
+        }
     }
 }
+
 
 void DrawGame(Game game)
 {
