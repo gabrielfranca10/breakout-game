@@ -2,8 +2,8 @@
 #include "paddle.h"
 #include "ball.h"
 #include "brick.h"
-#include <stdlib.h> 
-#include <stdbool.h> 
+#include <stdlib.h>
+#include <stdbool.h>
 
 void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
 {
@@ -57,7 +57,6 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
             }
 
             AdicionarTijolo(&jogo->listaTijolos, posTijolo, (Vector2){larguraTijolo, alturaTijolo}, cor, resistencia);
-
         }
     }
 }
@@ -76,10 +75,16 @@ void AtualizarJogo(Jogo *jogo)
     {
         if (jogo->bola.velocidade.y > 0)
         {
-            jogo->bola.velocidade.y *= -1;
             float posColisao = (jogo->bola.posicao.x - retPaddle.x) - retPaddle.width / 2;
             float normalizado = posColisao / (retPaddle.width / 2);
-            jogo->bola.velocidade.x = normalizado * 300.0f;
+
+            // Mantém velocidade constante
+            float velocidade = 350.0f;
+
+            // Direção linear simples
+            jogo->bola.velocidade.x = normalizado * velocidade;
+            jogo->bola.velocidade.y = -velocidade + (normalizado * 50.0f);
+
             jogo->bola.posicao.y = retPaddle.y - jogo->bola.raio;
         }
     }
