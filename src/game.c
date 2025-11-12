@@ -2,6 +2,8 @@
 #include "paddle.h"
 #include "ball.h"
 #include "brick.h"
+#include <stdlib.h> 
+#include <stdbool.h> 
 
 void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
 {
@@ -29,6 +31,8 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
     float deslocamentoX = (jogo->larguraTela - (larguraTijolo * colunas + (colunas - 1) * 5)) / 2;
     float deslocamentoY = 50.0f;
 
+    int resistentesContados = 0;
+
     for (int i = 0; i < linhas; i++)
     {
         for (int j = 0; j < colunas; j++)
@@ -36,13 +40,23 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
             Vector2 posTijolo;
             posTijolo.x = deslocamentoX + j * (larguraTijolo + 5);
             posTijolo.y = deslocamentoY + i * (alturaTijolo + 5);
+            
             Color cor;
-            if (i == 0) cor = RED;
-            else if (i == 1) cor = ORANGE;
-            else if (i == 2) cor = YELLOW;
-            else if (i == 3) cor = GREEN;
-            else if (i == 4) cor = BLUE;
-            AdicionarTijolo(&jogo->listaTijolos, posTijolo, (Vector2){larguraTijolo, alturaTijolo}, cor);
+            int resistencia;
+
+            if (resistentesContados < 4 && GetRandomValue(0, 12) == 0)
+            {
+                resistencia = 2;
+                cor = GOLD;
+                resistentesContados++;
+            }
+            else
+            {
+                resistencia = 1;
+                cor = GRAY;
+            }
+
+            AdicionarTijolo(&jogo->listaTijolos, posTijolo, (Vector2){larguraTijolo, alturaTijolo}, cor, resistencia);
         }
     }
 }

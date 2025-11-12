@@ -8,7 +8,7 @@ void IniciarListaTijolos(ListaTijolos *lista)
     lista->quantidade = 0;
 }
 
-void AdicionarTijolo(ListaTijolos *lista, Vector2 posicao, Vector2 tamanho, Color cor)
+void AdicionarTijolo(ListaTijolos *lista, Vector2 posicao, Vector2 tamanho, Color cor, int resistencia)
 {
     Tijolo *novoTijolo = (Tijolo *)malloc(sizeof(Tijolo));
     if (novoTijolo == NULL) return;
@@ -18,6 +18,8 @@ void AdicionarTijolo(ListaTijolos *lista, Vector2 posicao, Vector2 tamanho, Colo
     novoTijolo->retangulo.width = tamanho.x;
     novoTijolo->retangulo.height = tamanho.y;
     novoTijolo->cor = cor;
+    novoTijolo->corOriginal = cor;
+    novoTijolo->resistencia = resistencia;
     
     novoTijolo->proximo = lista->cabeca;
     lista->cabeca = novoTijolo;
@@ -34,24 +36,35 @@ void AtualizarListaTijolos(ListaTijolos *lista, Bola *bola, int *pontuacao)
         if (CheckCollisionCircleRec(bola->posicao, bola->raio, atual->retangulo))
         {
             bola->velocidade.y *= -1;
-            (*pontuacao) += 10;
-            
-            if (anterior == NULL)
+            atual->resistencia--;
+
+            if (atual->resistencia <= 0)
             {
-                lista->cabeca = atual->proximo;
-            } 
-            else 
-            {
-                anterior->proximo = atual->proximo;
+                (*pontuacao) += 10;
+                
+                if (anterior == NULL)
+                {
+                    lista->cabeca = atual->proximo;
+                } 
+                else 
+                {
+                    anterior->proximo = atual->proximo;
+                }
+                
+                Tijolo *paraLiberar = atual;
+                atual = atual->proximo;
+                free(paraLiberar);
+                lista->quantidade--;
+                
+                return;
             }
-            
-            Tijolo *paraLiberar = atual;
-            atual = atual->proximo;
-            free(paraLiberar);
-            lista->quantidade--;
-            
-            return;
+            else
+            {
+                atual->cor = Fade(atual->corOriginal, 0.5f);
+            }
         }
+        
+        if (atual == NULL) break; 
         
         anterior = atual;
         atual = atual->proximo;
