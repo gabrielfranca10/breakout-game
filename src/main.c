@@ -8,7 +8,7 @@ const int alturaTela = 450;
 
 void SalvarPontuacao(int pontuacao)
 {
-    FILE *arquivo = fopen("pontuacoes.txt", "a");
+    FILE *arquivo = fopen("scores.txt", "a");
     if (arquivo != NULL)
     {
         fprintf(arquivo, "%d\n", pontuacao);
@@ -16,12 +16,12 @@ void SalvarPontuacao(int pontuacao)
     }
 }
 
-void DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
+int DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
 {
     ClearBackground(BLACK);
     DrawText("HISTÓRICO DE PONTUAÇÕES", larguraTela / 2 - 220, 80, 30, YELLOW);
 
-    FILE *arquivo = fopen("pontuacoes.txt", "r");
+    FILE *arquivo = fopen("scores.txt", "r");
     if (arquivo == NULL)
     {
         DrawText("Nenhum histórico encontrado!", larguraTela / 2 - 170, 220, 20, WHITE);
@@ -44,11 +44,17 @@ void DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
     }
 
     DrawText("Pressione ESC para voltar", larguraTela / 2 - 150, 400, 20, GRAY);
+    if(IsKeyPressed(KEY_ESCAPE))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 int main(void)
 {
     InitWindow(larguraTela, alturaTela, "Projeto Breakout");
+    SetExitKey(0);
     SetTargetFPS(60);
 
     Jogo jogo = {0};
@@ -144,7 +150,9 @@ int main(void)
 
             case TELA_FIM_DE_JOGO:
             {
-                DesenharHistoricoPontuacoes(larguraTela, alturaTela);
+                if(DesenharHistoricoPontuacoes(larguraTela, alturaTela)){
+                    telaAtual = TELA_MENU;
+                }
             }
             break;
         }

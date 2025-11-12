@@ -13,11 +13,11 @@ void AtualizarPaddle(Paddle *paddle, int larguraTela)
 {
     if (IsKeyDown(KEY_LEFT))
     {
-        paddle->retangulo.x -= 7.0f;
+        paddle->retangulo.x -= 10.0f;
     }
     if (IsKeyDown(KEY_RIGHT))
     {
-        paddle->retangulo.x += 7.0f;
+        paddle->retangulo.x += 10.0f;
     }
 
     if (paddle->retangulo.x <= 0)

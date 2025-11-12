@@ -57,6 +57,7 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
             }
 
             AdicionarTijolo(&jogo->listaTijolos, posTijolo, (Vector2){larguraTijolo, alturaTijolo}, cor, resistencia);
+
         }
     }
 }
