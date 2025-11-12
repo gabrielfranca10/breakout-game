@@ -11,6 +11,7 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
     jogo->alturaTela = alturaTela;
     jogo->pontuacao = 0;
     jogo->vidas = 3;
+    jogo->jogoGanho = false;
 
     Vector2 posPaddle = { (jogo->larguraTela / 2.0f) - 50.0f, jogo->alturaTela - 40.0f };
     Vector2 tamPaddle = { 100.0f, 20.0f };
@@ -63,11 +64,17 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
 
 void AtualizarJogo(Jogo *jogo)
 {
-    if (jogo->vidas <= 0) return;
+    if (jogo->vidas <= 0 || jogo->jogoGanho) return;
 
     AtualizarPaddle(&jogo->paddle, jogo->larguraTela);
     AtualizarBola(&jogo->bola, jogo->larguraTela, jogo->alturaTela);
     AtualizarListaTijolos(&jogo->listaTijolos, &jogo->bola, &jogo->pontuacao);
+
+    if (jogo->listaTijolos.quantidade == 0)
+    {
+        jogo->jogoGanho = true;
+        jogo->bola.ativa = false;
+    }
 
     Rectangle retPaddle = jogo->paddle.retangulo;
 
@@ -77,14 +84,9 @@ void AtualizarJogo(Jogo *jogo)
         {
             float posColisao = (jogo->bola.posicao.x - retPaddle.x) - retPaddle.width / 2;
             float normalizado = posColisao / (retPaddle.width / 2);
-
-            // Mantém velocidade constante
             float velocidade = 350.0f;
-
-            // Direção linear simples
             jogo->bola.velocidade.x = normalizado * velocidade;
             jogo->bola.velocidade.y = -velocidade + (normalizado * 50.0f);
-
             jogo->bola.posicao.y = retPaddle.y - jogo->bola.raio;
         }
     }
@@ -124,6 +126,18 @@ void DesenharJogo(Jogo jogo)
         int tamanhoFonte = 40;
         int larguraTexto = MeasureText(texto, tamanhoFonte);
         DrawText(texto, (jogo.larguraTela - larguraTexto) / 2, jogo.alturaTela / 2 - tamanhoFonte, tamanhoFonte, RED);
+
+        const char* subtitulo = "Pressione ENTER para voltar ao Menu";
+        int tamFonteSub = 20;
+        int larguraSub = MeasureText(subtitulo, tamFonteSub);
+        DrawText(subtitulo, (jogo.larguraTela - larguraSub) / 2, jogo.alturaTela / 2 + 10, tamFonteSub, GRAY);
+    }
+    else if (jogo.jogoGanho)
+    {
+        const char* texto = "VOCÊ GANHOU!";
+        int tamanhoFonte = 40;
+        int larguraTexto = MeasureText(texto, tamanhoFonte);
+        DrawText(texto, (jogo.larguraTela - larguraTexto) / 2, jogo.alturaTela / 2 - tamanhoFonte, tamanhoFonte, GREEN);
 
         const char* subtitulo = "Pressione ENTER para voltar ao Menu";
         int tamFonteSub = 20;

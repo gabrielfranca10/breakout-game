@@ -2,6 +2,7 @@
 #include "screens.h"
 #include "game.h"
 #include <stdio.h>
+#include <stdbool.h>
 
 const int larguraTela = 800;
 const int alturaTela = 450;
@@ -16,7 +17,7 @@ void SalvarPontuacao(int pontuacao)
     }
 }
 
-int DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
+void DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
 {
     ClearBackground(BLACK);
     DrawText("HISTÓRICO DE PONTUAÇÕES", larguraTela / 2 - 220, 80, 30, YELLOW);
@@ -44,17 +45,11 @@ int DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
     }
 
     DrawText("Pressione ESC para voltar", larguraTela / 2 - 150, 400, 20, GRAY);
-    if(IsKeyPressed(KEY_ESCAPE))
-    {
-        return 1;
-    }
-    return 0;
 }
 
 int main(void)
 {
     InitWindow(larguraTela, alturaTela, "Projeto Breakout");
-    SetExitKey(0);
     SetTargetFPS(60);
 
     Jogo jogo = {0};
@@ -73,7 +68,7 @@ int main(void)
 
             case TELA_JOGO:
             {
-                if (jogo.vidas > 0)
+                if (jogo.vidas > 0 && !jogo.jogoGanho)
                 {
                     AtualizarJogo(&jogo);
                 }
@@ -150,9 +145,7 @@ int main(void)
 
             case TELA_FIM_DE_JOGO:
             {
-                if(DesenharHistoricoPontuacoes(larguraTela, alturaTela)){
-                    telaAtual = TELA_MENU;
-                }
+                DesenharHistoricoPontuacoes(larguraTela, alturaTela);
             }
             break;
         }

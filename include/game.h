@@ -14,6 +14,7 @@ typedef struct Jogo {
     int vidas;
     int larguraTela;
     int alturaTela;
+    bool jogoGanho;
 } Jogo;
 
 void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela);
