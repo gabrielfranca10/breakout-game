@@ -3,117 +3,116 @@
 #include "ball.h"
 #include "brick.h"
 
-void InitGame(Game *game, int screenWidth, int screenHeight)
+void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
 {
-    game->screenWidth = screenWidth;
-    game->screenHeight = screenHeight;
-    game->score = 0;
-    game->lives = 3;
+    jogo->larguraTela = larguraTela;
+    jogo->alturaTela = alturaTela;
+    jogo->pontuacao = 0;
+    jogo->vidas = 3;
 
-    Vector2 paddlePos = { (game->screenWidth / 2.0f) - 50.0f, game->screenHeight - 40.0f };
-    Vector2 paddleSize = { 100.0f, 20.0f };
-    InitPaddle(&game->paddle, paddlePos, paddleSize, WHITE);
+    Vector2 posPaddle = { (jogo->larguraTela / 2.0f) - 50.0f, jogo->alturaTela - 40.0f };
+    Vector2 tamPaddle = { 100.0f, 20.0f };
+    IniciarPaddle(&jogo->paddle, posPaddle, tamPaddle, WHITE);
 
-    Vector2 ballPos = { screenWidth / 2.0f, screenHeight / 2.0f };
-    Vector2 ballSpeed;
-    ballSpeed.y = -250.0f;
-    ballSpeed.x = GetRandomValue(-200, 200);
+    Vector2 posBola = { larguraTela / 2.0f, alturaTela / 2.0f };
+    Vector2 velBola;
+    velBola.y = -250.0f;
+    velBola.x = GetRandomValue(-200, 200);
+    IniciarBola(&jogo->bola, posBola, velBola, 8, YELLOW);
 
-    InitBall(&game->ball, ballPos, ballSpeed, 8, YELLOW);
+    IniciarListaTijolos(&jogo->listaTijolos);
 
-    InitBrickList(&game->brickList);
+    int linhas = 5;
+    int colunas = 10;
+    float larguraTijolo = (float)(jogo->larguraTela - (colunas + 1) * 5) / colunas;
+    float alturaTijolo = 25.0f;
+    float deslocamentoX = (jogo->larguraTela - (larguraTijolo * colunas + (colunas - 1) * 5)) / 2;
+    float deslocamentoY = 50.0f;
 
-    int brickRows = 5;
-    int brickCols = 10;
-    float brickWidth = (float)(game->screenWidth - (brickCols + 1) * 5) / brickCols;
-    float brickHeight = 25.0f;
-    float initialOffsetX = (game->screenWidth - (brickWidth * brickCols + (brickCols - 1) * 5)) / 2;
-    float initialOffsetY = 50.0f;
-
-    for (int i = 0; i < brickRows; i++)
+    for (int i = 0; i < linhas; i++)
     {
-        for (int j = 0; j < brickCols; j++)
+        for (int j = 0; j < colunas; j++)
         {
-            Vector2 brickPos;
-            brickPos.x = initialOffsetX + j * (brickWidth + 5);
-            brickPos.y = initialOffsetY + i * (brickHeight + 5);
-            Color color;
-            if (i == 0) color = RED;
-            else if (i == 1) color = ORANGE;
-            else if (i == 2) color = YELLOW;
-            else if (i == 3) color = GREEN;
-            else if (i == 4) color = BLUE;
-            AddBrick(&game->brickList, brickPos, (Vector2){brickWidth, brickHeight}, color);
+            Vector2 posTijolo;
+            posTijolo.x = deslocamentoX + j * (larguraTijolo + 5);
+            posTijolo.y = deslocamentoY + i * (alturaTijolo + 5);
+            Color cor;
+            if (i == 0) cor = RED;
+            else if (i == 1) cor = ORANGE;
+            else if (i == 2) cor = YELLOW;
+            else if (i == 3) cor = GREEN;
+            else if (i == 4) cor = BLUE;
+            AdicionarTijolo(&jogo->listaTijolos, posTijolo, (Vector2){larguraTijolo, alturaTijolo}, cor);
         }
     }
 }
 
-void UpdateGame(Game *game)
+void AtualizarJogo(Jogo *jogo)
 {
-    if (game->lives <= 0) return;
+    if (jogo->vidas <= 0) return;
 
-    UpdatePaddle(&game->paddle, game->screenWidth);
-    UpdateBall(&game->ball, game->screenWidth, game->screenHeight);
-    UpdateBrickList(&game->brickList, &game->ball, &game->score);
+    AtualizarPaddle(&jogo->paddle, jogo->larguraTela);
+    AtualizarBola(&jogo->bola, jogo->larguraTela, jogo->alturaTela);
+    AtualizarListaTijolos(&jogo->listaTijolos, &jogo->bola, &jogo->pontuacao);
 
-    Rectangle paddleRect = game->paddle.rect;
+    Rectangle retPaddle = jogo->paddle.retangulo;
 
-    if (CheckCollisionCircleRec(game->ball.position, game->ball.radius, paddleRect))
+    if (CheckCollisionCircleRec(jogo->bola.posicao, jogo->bola.raio, retPaddle))
     {
-        if (game->ball.speed.y > 0)
+        if (jogo->bola.velocidade.y > 0)
         {
-            game->ball.speed.y *= -1;
-            float hitPos = (game->ball.position.x - paddleRect.x) - paddleRect.width / 2;
-            float normalized = hitPos / (paddleRect.width / 2);
-            game->ball.speed.x = normalized * 300.0f;
-            game->ball.position.y = paddleRect.y - game->ball.radius;
+            jogo->bola.velocidade.y *= -1;
+            float posColisao = (jogo->bola.posicao.x - retPaddle.x) - retPaddle.width / 2;
+            float normalizado = posColisao / (retPaddle.width / 2);
+            jogo->bola.velocidade.x = normalizado * 300.0f;
+            jogo->bola.posicao.y = retPaddle.y - jogo->bola.raio;
         }
     }
 
-    if (game->ball.position.y - game->ball.radius > game->screenHeight)
+    if (jogo->bola.posicao.y - jogo->bola.raio > jogo->alturaTela)
     {
-        game->lives--;
+        jogo->vidas--;
 
-        if (game->lives > 0)
+        if (jogo->vidas > 0)
         {
-            Vector2 resetPos = { game->screenWidth / 2.0f, game->screenHeight / 2.0f };
-            Vector2 resetSpeed;
-            resetSpeed.y = -250.0f;
-            resetSpeed.x = GetRandomValue(-200, 200);
-            InitBall(&game->ball, resetPos, resetSpeed, game->ball.radius, game->ball.color);
+            Vector2 posReset = { jogo->larguraTela / 2.0f, jogo->alturaTela / 2.0f };
+            Vector2 velReset;
+            velReset.y = -250.0f;
+            velReset.x = GetRandomValue(-200, 200);
+            IniciarBola(&jogo->bola, posReset, velReset, jogo->bola.raio, jogo->bola.cor);
         }
         else
         {
-            game->lives = 0;
+            jogo->vidas = 0;
         }
     }
 }
 
-void DrawGame(Game game)
+void DesenharJogo(Jogo jogo)
 {
     ClearBackground(BLACK);
-    DrawPaddle(game.paddle);
-    DrawBall(game.ball);
-    DrawBrickList(&game.brickList);
+    DesenharPaddle(jogo.paddle);
+    DesenharBola(jogo.bola);
+    DesenharListaTijolos(&jogo.listaTijolos);
 
-    DrawText(TextFormat("Pontos: %04i", game.score), 20, game.screenHeight - 25, 20, WHITE);
-    DrawText(TextFormat("Vidas: %i", game.lives), game.screenWidth - 100, game.screenHeight - 25, 20, WHITE);
+    DrawText(TextFormat("Pontos: %04i", jogo.pontuacao), 20, jogo.alturaTela - 25, 20, WHITE);
+    DrawText(TextFormat("Vidas: %i", jogo.vidas), jogo.larguraTela - 100, jogo.alturaTela - 25, 20, WHITE);
 
-    if (game.lives <= 0)
+    if (jogo.vidas <= 0)
     {
-        const char* text = "GAME OVER";
-        int fontSize = 40;
-        int textWidth = MeasureText(text, fontSize);
-        DrawText(text, (game.screenWidth - textWidth) / 2, game.screenHeight / 2 - fontSize, fontSize, RED);
-        
-        const char* subtext = "Pressione ENTER para voltar ao Menu";
-        int subFontSize = 20;
-        int subTextWidth = MeasureText(subtext, subFontSize);
-        DrawText(subtext, (game.screenWidth - subTextWidth) / 2, game.screenHeight / 2 + 10, subFontSize, GRAY);
+        const char* texto = "FIM DE JOGO";
+        int tamanhoFonte = 40;
+        int larguraTexto = MeasureText(texto, tamanhoFonte);
+        DrawText(texto, (jogo.larguraTela - larguraTexto) / 2, jogo.alturaTela / 2 - tamanhoFonte, tamanhoFonte, RED);
+
+        const char* subtitulo = "Pressione ENTER para voltar ao Menu";
+        int tamFonteSub = 20;
+        int larguraSub = MeasureText(subtitulo, tamFonteSub);
+        DrawText(subtitulo, (jogo.larguraTela - larguraSub) / 2, jogo.alturaTela / 2 + 10, tamFonteSub, GRAY);
     }
 }
 
-void UnloadGame(Game *game)
+void DescarregarJogo(Jogo *jogo)
 {
-    FreeBrickList(&game->brickList);
+    LiberarListaTijolos(&jogo->listaTijolos);
 }

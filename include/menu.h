@@ -4,12 +4,12 @@
 #include "raylib.h"
 
 typedef enum {
-    MENU_NONE,
-    MENU_START,
-    MENU_HISTORY,
-    MENU_EXIT
-}MenuOption;
+    MENU_NENHUM,
+    MENU_INICIAR,
+    MENU_HISTORICO,
+    MENU_SAIR
+} OpcaoMenu;
 
-MenuOption DrawMenu(int screenWidth, int screenHeight);
+OpcaoMenu DesenharMenu(int larguraTela, int alturaTela);
 
 #endif

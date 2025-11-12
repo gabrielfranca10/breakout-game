@@ -1,10 +1,10 @@
 #ifndef SCREENS_H
 #define SCREENS_H
 
-typedef enum GameScreen {
-    SCREEN_MENU,      
-    SCREEN_GAME,      
-    SCREEN_GAME_OVER  
-} GameScreen;
+typedef enum TelaJogo {
+    TELA_MENU,
+    TELA_JOGO,
+    TELA_FIM_DE_JOGO
+} TelaJogo;
 
 #endif

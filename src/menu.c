@@ -1,37 +1,37 @@
 #include "menu.h"
 
-MenuOption DrawMenu(int screenWidth, int screenHeight)
+OpcaoMenu DesenharMenu(int larguraTela, int alturaTela)
 {
     ClearBackground(BLACK);
 
-    const char *title = "BREAKOUT";
-    int titleFontSize = 60;
-    int titleWidth = MeasureText(title, titleFontSize);
-    DrawText(title, (screenWidth - titleWidth) / 2, 100, titleFontSize, YELLOW);
+    const char *titulo = "BREAKOUT";
+    int tamanhoFonte = 60;
+    int larguraTitulo = MeasureText(titulo, tamanhoFonte);
+    DrawText(titulo, (larguraTela - larguraTitulo) / 2, 100, tamanhoFonte, YELLOW);
 
-    const char *options[] = {"Começar", "Histórico de Pontuação", "Sair"};
-    int totalOptions = 3;
+    const char *opcoes[] = {"Começar", "Histórico de Pontuação", "Sair"};
+    int totalOpcoes = 3;
 
-    for (int i = 0; i < totalOptions; i++)
+    for (int i = 0; i < totalOpcoes; i++)
     {
         float y = 220 + i * 80;
-        Rectangle btn = {screenWidth / 2 - 160, y, 320, 50};
-        bool hover = CheckCollisionPointRec(GetMousePosition(), btn);
+        Rectangle botao = {larguraTela / 2 - 160, y, 320, 50};
+        bool hover = CheckCollisionPointRec(GetMousePosition(), botao);
 
         if (hover)
-            DrawRectangleRec(btn, DARKGRAY);
+            DrawRectangleRec(botao, DARKGRAY);
         else
-            DrawRectangleLinesEx(btn, 3, GRAY);
+            DrawRectangleLinesEx(botao, 3, GRAY);
 
-        DrawText(options[i], btn.x + 30, btn.y + 15, 20, WHITE);
+        DrawText(opcoes[i], botao.x + 30, botao.y + 15, 20, WHITE);
 
         if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
         {
-            if (i == 0) return MENU_START;
-            if (i == 1) return MENU_HISTORY;
-            if (i == 2) return MENU_EXIT;
+            if (i == 0) return MENU_INICIAR;
+            if (i == 1) return MENU_HISTORICO;
+            if (i == 2) return MENU_SAIR;
         }
     }
 
-    return MENU_NONE;
+    return MENU_NENHUM;
 }

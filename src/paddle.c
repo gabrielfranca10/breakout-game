@@ -1,36 +1,36 @@
 #include "paddle.h"
 
-void InitPaddle(Paddle *paddle, Vector2 position, Vector2 size, Color color)
+void IniciarPaddle(Paddle *paddle, Vector2 posicao, Vector2 tamanho, Color cor)
 {
-    paddle->rect.x = position.x;
-    paddle->rect.y = position.y;
-    paddle->rect.width = size.x;
-    paddle->rect.height = size.y;
-    paddle->color = color;
+    paddle->retangulo.x = posicao.x;
+    paddle->retangulo.y = posicao.y;
+    paddle->retangulo.width = tamanho.x;
+    paddle->retangulo.height = tamanho.y;
+    paddle->cor = cor;
 }
 
-void UpdatePaddle(Paddle *paddle, int screenWidth)
+void AtualizarPaddle(Paddle *paddle, int larguraTela)
 {
     if (IsKeyDown(KEY_LEFT))
     {
-        paddle->rect.x -= 7.0f;
+        paddle->retangulo.x -= 7.0f;
     }
     if (IsKeyDown(KEY_RIGHT))
     {
-        paddle->rect.x += 7.0f;
+        paddle->retangulo.x += 7.0f;
     }
 
-    if (paddle->rect.x <= 0)
+    if (paddle->retangulo.x <= 0)
     {
-        paddle->rect.x = 0;
+        paddle->retangulo.x = 0;
     }
-    if (paddle->rect.x + paddle->rect.width >= screenWidth)
+    if (paddle->retangulo.x + paddle->retangulo.width >= larguraTela)
     {
-        paddle->rect.x = screenWidth - paddle->rect.width;
+        paddle->retangulo.x = larguraTela - paddle->retangulo.width;
     }
 }
 
-void DrawPaddle(Paddle paddle)
+void DesenharPaddle(Paddle paddle)
 {
-    DrawRectangleRec(paddle.rect, paddle.color);
+    DrawRectangleRec(paddle.retangulo, paddle.cor);
 }

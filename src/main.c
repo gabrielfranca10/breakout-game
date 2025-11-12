@@ -1,131 +1,158 @@
 #include "raylib.h"
-#include "screens.h" 
-#include "game.h"  
+#include "screens.h"
+#include "game.h"
 #include <stdio.h>
 
-const int screenWidth = 800;
-const int screenHeight = 450;
+const int larguraTela = 800;
+const int alturaTela = 450;
 
-void SaveScore(int score) {
-    FILE *file = fopen("scores.txt", "a");
-    if (file != NULL) {
-        fprintf(file, "%d\n", score);
-        fclose(file);
+void SalvarPontuacao(int pontuacao)
+{
+    FILE *arquivo = fopen("pontuacoes.txt", "a");
+    if (arquivo != NULL)
+    {
+        fprintf(arquivo, "%d\n", pontuacao);
+        fclose(arquivo);
     }
 }
 
-void DrawScoreHistory(int screenWidth, int screenHeight) {
+void DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
+{
     ClearBackground(BLACK);
-    DrawText("HISTÓRICO DE PONTUAÇÕES", screenWidth / 2 - 220, 80, 30, YELLOW);
+    DrawText("HISTÓRICO DE PONTUAÇÕES", larguraTela / 2 - 220, 80, 30, YELLOW);
 
-    FILE *file = fopen("scores.txt", "r");
-    if (file == NULL) {
-        DrawText("Nenhum histórico encontrado!", screenWidth / 2 - 170, 220, 20, WHITE);
-    } else {
+    FILE *arquivo = fopen("pontuacoes.txt", "r");
+    if (arquivo == NULL)
+    {
+        DrawText("Nenhum histórico encontrado!", larguraTela / 2 - 170, 220, 20, WHITE);
+    }
+    else
+    {
         int y = 160;
-        int score;
+        int pontuacao;
         int partida = 1;
 
-        while (fscanf(file, "%d", &score) != EOF && partida <= 10) {
-            DrawText(TextFormat("Partida %d: %d pontos", partida, score),
-                     screenWidth / 2 - 130, y, 20, LIGHTGRAY);
+        while (fscanf(arquivo, "%d", &pontuacao) != EOF && partida <= 10)
+        {
+            DrawText(TextFormat("Partida %d: %d pontos", partida, pontuacao),
+                     larguraTela / 2 - 130, y, 20, LIGHTGRAY);
             y += 35;
             partida++;
         }
 
-        fclose(file);
+        fclose(arquivo);
     }
 
-    DrawText("Pressione ESC para voltar", screenWidth / 2 - 150, 400, 20, GRAY);
+    DrawText("Pressione ESC para voltar", larguraTela / 2 - 150, 400, 20, GRAY);
 }
 
 int main(void)
 {
-    InitWindow(screenWidth, screenHeight, "Projeto Breakout");
+    InitWindow(larguraTela, alturaTela, "Projeto Breakout");
     SetTargetFPS(60);
-    
-    Game game = {0};
-    InitGame(&game, screenWidth, screenHeight); 
 
-    int currentScreen = SCREEN_MENU; 
+    Jogo jogo = {0};
+    IniciarJogo(&jogo, larguraTela, alturaTela);
+
+    int telaAtual = TELA_MENU;
 
     while (!WindowShouldClose())
     {
-        switch (currentScreen)
+        switch (telaAtual)
         {
-            case SCREEN_MENU:
+            case TELA_MENU:
             {
-            } break;
-            case SCREEN_GAME:
+            }
+            break;
+
+            case TELA_JOGO:
             {
-                if (game.lives > 0) {
-                    UpdateGame(&game);
-                } else {
-                    if (IsKeyPressed(KEY_ENTER)) {
-                        SaveScore(game.score);
-                        currentScreen = SCREEN_MENU;
-                    } else if (IsKeyPressed(KEY_ESCAPE)) {
-                         SaveScore(game.score);
-                         currentScreen = SCREEN_MENU;
+                if (jogo.vidas > 0)
+                {
+                    AtualizarJogo(&jogo);
+                }
+                else
+                {
+                    if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE))
+                    {
+                        SalvarPontuacao(jogo.pontuacao);
+                        telaAtual = TELA_MENU;
                     }
                 }
-            } break;
-            case 2: 
+            }
+            break;
+
+            case TELA_FIM_DE_JOGO:
             {
-                if (IsKeyPressed(KEY_ESCAPE)) currentScreen = SCREEN_MENU;
-            } break;
+                if (IsKeyPressed(KEY_ESCAPE)) telaAtual = TELA_MENU;
+            }
+            break;
         }
 
         BeginDrawing();
 
-        switch (currentScreen)
+        switch (telaAtual)
         {
-            case SCREEN_MENU:
+            case TELA_MENU:
             {
                 ClearBackground(BLACK);
-                const char *title = "BREAKOUT";
-                int titleFontSize = 60;
-                int titleWidth = MeasureText(title, titleFontSize);
-                DrawText(title, (screenWidth - titleWidth) / 2, 100, titleFontSize, YELLOW);
 
-                const char *options[] = {"Começar", "Histórico de Pontuação", "Sair"};
-                for (int i = 0; i < 3; i++) {
-                    Rectangle btn = {screenWidth / 2 - 160, 220 + i * 80.0f, 320, 50};
-                    bool hover = CheckCollisionPointRec(GetMousePosition(), btn);
-                    if (hover) DrawRectangleRec(btn, DARKGRAY);
-                    else DrawRectangleLinesEx(btn, 3, GRAY);
-                    DrawText(options[i], btn.x + 30, btn.y + 15, 20, WHITE);
+                const char *titulo = "BREAKOUT";
+                int tamanhoFonte = 60;
+                int larguraTitulo = MeasureText(titulo, tamanhoFonte);
+                DrawText(titulo, (larguraTela - larguraTitulo) / 2, 100, tamanhoFonte, YELLOW);
 
-                    if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
-                        if (i == 0) {
-                            UnloadGame(&game);
-                            InitGame(&game, screenWidth, screenHeight);
-                            currentScreen = SCREEN_GAME;
-                        } else if (i == 1) {
-                            currentScreen = 2; 
-                        } else if (i == 2) {
-                            UnloadGame(&game);
+                const char *opcoes[] = {"Começar", "Histórico de Pontuação", "Sair"};
+                for (int i = 0; i < 3; i++)
+                {
+                    Rectangle botao = {larguraTela / 2 - 160, 220 + i * 80.0f, 320, 50};
+                    bool hover = CheckCollisionPointRec(GetMousePosition(), botao);
+                    if (hover)
+                        DrawRectangleRec(botao, DARKGRAY);
+                    else
+                        DrawRectangleLinesEx(botao, 3, GRAY);
+                    DrawText(opcoes[i], botao.x + 30, botao.y + 15, 20, WHITE);
+
+                    if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+                    {
+                        if (i == 0)
+                        {
+                            DescarregarJogo(&jogo);
+                            IniciarJogo(&jogo, larguraTela, alturaTela);
+                            telaAtual = TELA_JOGO;
+                        }
+                        else if (i == 1)
+                        {
+                            telaAtual = TELA_FIM_DE_JOGO;
+                        }
+                        else if (i == 2)
+                        {
+                            DescarregarJogo(&jogo);
                             CloseWindow();
                             return 0;
                         }
                     }
                 }
-            } break;
+            }
+            break;
 
-            case SCREEN_GAME:
+            case TELA_JOGO:
             {
-                DrawGame(game);
-            } break;
+                DesenharJogo(jogo);
+            }
+            break;
 
-            case 2: 
+            case TELA_FIM_DE_JOGO:
             {
-                DrawScoreHistory(screenWidth, screenHeight);
-            } break;
+                DesenharHistoricoPontuacoes(larguraTela, alturaTela);
+            }
+            break;
         }
+
         EndDrawing();
     }
 
-    UnloadGame(&game);
+    DescarregarJogo(&jogo);
     CloseWindow();
     return 0;
 }

@@ -2,83 +2,81 @@
 #include "ball.h"
 #include <stdlib.h>
 
-void InitBrickList(BrickList *list)
+void IniciarListaTijolos(ListaTijolos *lista)
 {
-    list->head = NULL;
-    list->count = 0;
+    lista->cabeca = NULL;
+    lista->quantidade = 0;
 }
 
-void AddBrick(BrickList *list, Vector2 position, Vector2 size, Color color)
+void AdicionarTijolo(ListaTijolos *lista, Vector2 posicao, Vector2 tamanho, Color cor)
 {
-    Brick *newBrick = (Brick *)malloc(sizeof(Brick));
-    if (newBrick == NULL) {
-        return;
-    }
+    Tijolo *novoTijolo = (Tijolo *)malloc(sizeof(Tijolo));
+    if (novoTijolo == NULL) return;
 
-    newBrick->rect.x = position.x;
-    newBrick->rect.y = position.y;
-    newBrick->rect.width = size.x;
-    newBrick->rect.height = size.y;
-    newBrick->color = color;
+    novoTijolo->retangulo.x = posicao.x;
+    novoTijolo->retangulo.y = posicao.y;
+    novoTijolo->retangulo.width = tamanho.x;
+    novoTijolo->retangulo.height = tamanho.y;
+    novoTijolo->cor = cor;
     
-    newBrick->prox = list->head;
-    list->head = newBrick;
-    list->count++;
+    novoTijolo->proximo = lista->cabeca;
+    lista->cabeca = novoTijolo;
+    lista->quantidade++;
 }
 
-void UpdateBrickList(BrickList *list, Ball *ball, int *score)
+void AtualizarListaTijolos(ListaTijolos *lista, Bola *bola, int *pontuacao)
 {
-    Brick *current = list->head;
-    Brick *prev = NULL;
+    Tijolo *atual = lista->cabeca;
+    Tijolo *anterior = NULL;
 
-    while (current != NULL)
+    while (atual != NULL)
     {
-        if (CheckCollisionCircleRec(ball->position, ball->radius, current->rect))
+        if (CheckCollisionCircleRec(bola->posicao, bola->raio, atual->retangulo))
         {
-            ball->speed.y *= -1;
-            (*score) += 10;
+            bola->velocidade.y *= -1;
+            (*pontuacao) += 10;
             
-            if (prev == NULL)
+            if (anterior == NULL)
             {
-                list->head = current->prox;
+                lista->cabeca = atual->proximo;
             } 
             else 
             {
-                prev->prox = current->prox;
+                anterior->proximo = atual->proximo;
             }
             
-            Brick *toFree = current;
-            current = current->prox;
-            free(toFree); 
-            list->count--;
+            Tijolo *paraLiberar = atual;
+            atual = atual->proximo;
+            free(paraLiberar);
+            lista->quantidade--;
             
             return;
         }
         
-        prev = current;
-        current = current->prox;
+        anterior = atual;
+        atual = atual->proximo;
     }
 }
 
-void DrawBrickList(BrickList *list)
+void DesenharListaTijolos(ListaTijolos *lista)
 {
-    Brick *current = list->head;
-    while (current != NULL)
+    Tijolo *atual = lista->cabeca;
+    while (atual != NULL)
     {
-        DrawRectangleRec(current->rect, current->color);
-        current = current->prox;
+        DrawRectangleRec(atual->retangulo, atual->cor);
+        atual = atual->proximo;
     }
 }
 
-void FreeBrickList(BrickList *list)
+void LiberarListaTijolos(ListaTijolos *lista)
 {
-    Brick *current = list->head;
-    while (current != NULL)
+    Tijolo *atual = lista->cabeca;
+    while (atual != NULL)
     {
-        Brick *toFree = current;
-        current = current->prox;
-        free(toFree);
+        Tijolo *paraLiberar = atual;
+        atual = atual->proximo;
+        free(paraLiberar);
     }
-    list->head = NULL;
-    list->count = 0;
+    lista->cabeca = NULL;
+    lista->quantidade = 0;
 }

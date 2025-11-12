@@ -1,41 +1,41 @@
 #include "ball.h"
 
-void InitBall(Ball *ball, Vector2 position, Vector2 speed, float radius, Color color)
+void IniciarBola(Bola *bola, Vector2 posicao, Vector2 velocidade, float raio, Color cor)
 {
-    ball->position = position;
-    ball->speed = speed;
-    ball->radius = radius;
-    ball->color = color;
-    ball->active = true;
+    bola->posicao = posicao;
+    bola->velocidade = velocidade;
+    bola->raio = raio;
+    bola->cor = cor;
+    bola->ativa = true;
 }
 
-void UpdateBall(Ball *ball, int screenWidth, int screenHeight)
+void AtualizarBola(Bola *bola, int larguraTela, int alturaTela)
 {
-    if (!ball->active) return;
+    if (!bola->ativa) return;
 
-    ball->position.x += ball->speed.x * GetFrameTime();
-    ball->position.y += ball->speed.y * GetFrameTime();
+    bola->posicao.x += bola->velocidade.x * GetFrameTime();
+    bola->posicao.y += bola->velocidade.y * GetFrameTime();
 
-    if ((ball->position.x - ball->radius) <= 0)
+    if ((bola->posicao.x - bola->raio) <= 0)
     {
-        ball->speed.x *= -1;
-        ball->position.x = ball->radius;
+        bola->velocidade.x *= -1;
+        bola->posicao.x = bola->raio;
     }
     
-    if ((ball->position.x + ball->radius) >= screenWidth)
+    if ((bola->posicao.x + bola->raio) >= larguraTela)
     {
-        ball->speed.x *= -1;
-        ball->position.x = screenWidth - ball->radius;
+        bola->velocidade.x *= -1;
+        bola->posicao.x = larguraTela - bola->raio;
     }
 
-    if ((ball->position.y - ball->radius) <= 0)
+    if ((bola->posicao.y - bola->raio) <= 0)
     {
-        ball->speed.y *= -1;
-        ball->position.y = ball->radius;
+        bola->velocidade.y *= -1;
+        bola->posicao.y = bola->raio;
     }
 }
 
-void DrawBall(Ball ball)
+void DesenharBola(Bola bola)
 {
-    DrawCircleV(ball.position, ball.radius, ball.color);
+    DrawCircleV(bola.posicao, bola.raio, bola.cor);
 }

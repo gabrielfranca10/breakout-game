@@ -3,16 +3,16 @@
 
 #include "raylib.h"
 
-typedef struct Ball {
-    Vector2 position;
-    Vector2 speed;
-    float radius;
-    Color color;
-    bool active;
-} Ball;
+typedef struct Bola {
+    Vector2 posicao;
+    Vector2 velocidade;
+    float raio;
+    Color cor;
+    bool ativa;
+} Bola;
 
-void InitBall(Ball *ball, Vector2 position, Vector2 speed, float radius, Color color);
-void UpdateBall(Ball *ball, int screenWidth, int screenHeight);
-void DrawBall(Ball ball);
+void IniciarBola(Bola *bola, Vector2 posicao, Vector2 velocidade, float raio, Color cor);
+void AtualizarBola(Bola *bola, int larguraTela, int alturaTela);
+void DesenharBola(Bola bola);
 
 #endif

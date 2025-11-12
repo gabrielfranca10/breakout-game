@@ -3,23 +3,23 @@
 
 #include "raylib.h"
 
-struct Ball; 
+struct Bola;
 
-typedef struct Brick {
-    Rectangle rect;
-    Color color;
-    struct Brick *prox;
-} Brick;
+typedef struct Tijolo {
+    Rectangle retangulo;
+    Color cor;
+    struct Tijolo *proximo;
+} Tijolo;
 
-typedef struct BrickList {
-    Brick *head;
-    int count;
-} BrickList;
+typedef struct ListaTijolos {
+    Tijolo *cabeca;
+    int quantidade;
+} ListaTijolos;
 
-void InitBrickList(BrickList *list);
-void AddBrick(BrickList *list, Vector2 position, Vector2 size, Color color);
-void UpdateBrickList(BrickList *list, struct Ball *ball, int *score);
-void DrawBrickList(BrickList *list);
-void FreeBrickList(BrickList *list);
+void IniciarListaTijolos(ListaTijolos *lista);
+void AdicionarTijolo(ListaTijolos *lista, Vector2 posicao, Vector2 tamanho, Color cor);
+void AtualizarListaTijolos(ListaTijolos *lista, struct Bola *bola, int *pontuacao);
+void DesenharListaTijolos(ListaTijolos *lista);
+void LiberarListaTijolos(ListaTijolos *lista);
 
 #endif

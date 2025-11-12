@@ -2,23 +2,23 @@
 #define GAME_H
 
 #include "raylib.h"
-#include "paddle.h" 
+#include "paddle.h"
 #include "ball.h"
-#include "brick.h" 
+#include "brick.h"
 
-typedef struct Game {
+typedef struct Jogo {
     Paddle paddle;
-    Ball ball;
-    BrickList brickList;
-    int score;
-    int lives; 
-    int screenWidth;
-    int screenHeight;
-}Game;
+    Bola bola;
+    ListaTijolos listaTijolos;
+    int pontuacao;
+    int vidas;
+    int larguraTela;
+    int alturaTela;
+} Jogo;
 
-void InitGame(Game *game, int screenWidth, int screenHeight);
-void UpdateGame(Game *game);
-void DrawGame(Game game);
-void UnloadGame(Game *game);
+void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela);
+void AtualizarJogo(Jogo *jogo);
+void DesenharJogo(Jogo jogo);
+void DescarregarJogo(Jogo *jogo);
 
 #endif
