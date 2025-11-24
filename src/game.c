@@ -130,7 +130,7 @@ void DesenharJogo(Jogo jogo)
         const char* subtitulo = "Pressione ENTER para voltar ao Menu";
         int tamFonteSub = 20;
         int larguraSub = MeasureText(subtitulo, tamFonteSub);
-        DrawText(subtitulo, (jogo.larguraTela - larguraSub) / 2, jogo.alturaTela / 2 + 10, tamFonteSub, GRAY);
+        DrawText(subtitulo, (jogo.larguraTela - larguraSub) / 2, jogo.alturaTela / 2 + 10, tamFonteSub, WHITE);
     }
     else if (jogo.jogoGanho)
     {

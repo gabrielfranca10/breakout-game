@@ -47,10 +47,26 @@ void DesenharHistoricoPontuacoes(int larguraTela, int alturaTela)
     DrawText("Pressione ESC para voltar", larguraTela / 2 - 150, 400, 20, GRAY);
 }
 
+float CalcularEscala(Texture2D tex)
+{
+    float sX = (float)larguraTela / tex.width;
+    float sY = (float)alturaTela / tex.height;
+    return (sX > sY) ? sX : sY;
+}
+
 int main(void)
 {
     InitWindow(larguraTela, alturaTela, "Projeto Breakout");
+    InitAudioDevice();
     SetTargetFPS(60);
+
+    Texture2D fundoMenu = LoadTexture("assets/fundo_menu.png");
+    Texture2D fundoJogo = LoadTexture("assets/fundo_breakout.png");
+
+    Music musicaMenu = LoadMusicStream("assets/som_menu.wav");
+    Music musicaJogo = LoadMusicStream("assets/som_jogo.wav");
+
+    PlayMusicStream(musicaMenu);
 
     Jogo jogo = {0};
     IniciarJogo(&jogo, larguraTela, alturaTela);
@@ -59,15 +75,15 @@ int main(void)
 
     while (!WindowShouldClose())
     {
+        UpdateMusicStream(musicaMenu);
+        UpdateMusicStream(musicaJogo);
+
         switch (telaAtual)
         {
             case TELA_MENU:
-            {
-            }
             break;
 
             case TELA_JOGO:
-            {
                 if (jogo.vidas > 0 && !jogo.jogoGanho)
                 {
                     AtualizarJogo(&jogo);
@@ -77,47 +93,60 @@ int main(void)
                     if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_ESCAPE))
                     {
                         SalvarPontuacao(jogo.pontuacao);
+                        StopMusicStream(musicaJogo);
+                        PlayMusicStream(musicaMenu);
                         telaAtual = TELA_MENU;
                     }
                 }
-            }
             break;
 
             case TELA_FIM_DE_JOGO:
-            {
                 if (IsKeyPressed(KEY_ESCAPE)) telaAtual = TELA_MENU;
-            }
             break;
         }
 
         BeginDrawing();
 
+        if (telaAtual == TELA_MENU)
+        {
+            float esc = CalcularEscala(fundoMenu);
+            DrawTextureEx(fundoMenu, (Vector2){0, 0}, 0, esc, WHITE);
+        }
+        else
+        {
+            float esc = CalcularEscala(fundoJogo);
+            DrawTextureEx(fundoJogo, (Vector2){0, 0}, 0, esc, WHITE);
+        }
+
         switch (telaAtual)
         {
             case TELA_MENU:
             {
-                ClearBackground(BLACK);
-
-                const char *titulo = "BREAKOUT";
+                const char *titulo = "BREAKOUT GAME";
                 int tamanhoFonte = 60;
                 int larguraTitulo = MeasureText(titulo, tamanhoFonte);
                 DrawText(titulo, (larguraTela - larguraTitulo) / 2, 100, tamanhoFonte, YELLOW);
 
                 const char *opcoes[] = {"Começar", "Histórico de Pontuação", "Sair"};
+
                 for (int i = 0; i < 3; i++)
                 {
                     Rectangle botao = {larguraTela / 2 - 160, 220 + i * 80.0f, 320, 50};
                     bool hover = CheckCollisionPointRec(GetMousePosition(), botao);
+
                     if (hover)
                         DrawRectangleRec(botao, DARKGRAY);
                     else
                         DrawRectangleLinesEx(botao, 3, GRAY);
+
                     DrawText(opcoes[i], botao.x + 30, botao.y + 15, 20, WHITE);
 
                     if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
                     {
                         if (i == 0)
                         {
+                            StopMusicStream(musicaMenu);
+                            PlayMusicStream(musicaJogo);
                             DescarregarJogo(&jogo);
                             IniciarJogo(&jogo, larguraTela, alturaTela);
                             telaAtual = TELA_JOGO;
@@ -128,7 +157,12 @@ int main(void)
                         }
                         else if (i == 2)
                         {
+                            UnloadTexture(fundoMenu);
+                            UnloadTexture(fundoJogo);
+                            UnloadMusicStream(musicaMenu);
+                            UnloadMusicStream(musicaJogo);
                             DescarregarJogo(&jogo);
+                            CloseAudioDevice();
                             CloseWindow();
                             return 0;
                         }
@@ -138,22 +172,24 @@ int main(void)
             break;
 
             case TELA_JOGO:
-            {
                 DesenharJogo(jogo);
-            }
             break;
 
             case TELA_FIM_DE_JOGO:
-            {
                 DesenharHistoricoPontuacoes(larguraTela, alturaTela);
-            }
             break;
         }
 
         EndDrawing();
     }
 
+    UnloadTexture(fundoMenu);
+    UnloadTexture(fundoJogo);
+    UnloadMusicStream(musicaMenu);
+    UnloadMusicStream(musicaJogo);
     DescarregarJogo(&jogo);
+    CloseAudioDevice();
     CloseWindow();
+
     return 0;
 }
