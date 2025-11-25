@@ -19,7 +19,7 @@ void IniciarJogo(Jogo *jogo, int larguraTela, int alturaTela)
 
     Vector2 posBola = { larguraTela / 2.0f, alturaTela / 2.0f };
     Vector2 velBola;
-    velBola.y = -250.0f;
+    velBola.y = -220.0f;
     velBola.x = GetRandomValue(-200, 200);
     IniciarBola(&jogo->bola, posBola, velBola, 8, YELLOW);
 
