@@ -6,9 +6,9 @@ O jogo consiste em controlar uma barra (paddle) para rebater a bola e destruir t
 O projeto aplica princípios fundamentais da programação estruturada, modularização e uso da biblioteca gráfica Raylib.
 
 👨‍💻 Autores
-Fernando Soares da Silva
-Gabriel França de Albuquerque Pernambuco
-Lucas Canto
+- Fernando Soares da Silva
+- Gabriel França de Albuquerque Pernambuco
+- Lucas Canto
 
 🎥 Assista ao screencast do jogo  
 Clique na imagem abaixo para ver o Breakout em ação:  
@@ -22,7 +22,7 @@ Para compilar e executar o Breakout Game, você precisa ter:
 
 - Compilador C (GCC recomendado)  
 - Biblioteca Raylib → https://www.raylib.com/  
-- Git  
+- Git para clonar o repositório
 
 ---
 
@@ -46,7 +46,9 @@ sudo apt install build-essential gcc make git
 sudo apt install libraylib-dev
 ```
 
-### Se libraylib-dev não estiver disponível, siga as instruções de instalação manual no site oficial da Raylib.
+### Caso **libraylib-dev** não esteja disponível  
+Instale manualmente (instruções oficiais da **[Raylib](https://www.raylib.com/)**):
+
 ```bash
 cd ~
 git clone https://github.com/raysan5/raylib.git
