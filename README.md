@@ -9,10 +9,23 @@ destruir todos os tijolos.\
 O projeto aplica princípios fundamentais da programação estruturada,
 modularização e uso da biblioteca gráfica Raylib.
 
-👨‍💻 Autores - Fernando Soares da Silva - Gabriel França de Albuquerque
-Pernambuco - Lucas Canto
+👨‍💻 **Autores**
+- Fernando Soares da Silva  
+- Gabriel França de Albuquerque Pernambuco  
+- Lucas Canto  
 
-🎥 Assista ao screencast do jogo
+---
+
+## 🎥 Assista ao screencast do jogo
+
+Clique na imagem abaixo para ver o Breakout em ação:
+
+<p align="center">
+  <a href="https://youtu.be/fXs_7PF-deI?si=D_fpmWTQLc_gztli">
+    <img src="https://github.com/user-attachments/assets/66ea6830-7af8-437a-93a5-504fa48cc63a" 
+         alt="Screenshot do Breakout" width="800">
+  </a>
+</p>
 
 ------------------------------------------------------------------------
 
@@ -188,3 +201,6 @@ Abra **MSYS2 MinGW 64-bit**, não use o MSYS padrão.
 # 🎮 Divirta-se jogando!
 
 Se curtir o projeto, ⭐ deixe uma estrela no repositório!
+
+# Link do slide (Canva)
+**[Clique aqui para ver o slide do jogo](https://www.canva.com/design/DAGl9oDItTA/czAjUKksZqC44ttbDm5qhw/edit?utm_content=DAGl9oDItTA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)**
